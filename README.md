@@ -6,7 +6,7 @@ Spark project for MS Big Data Telecom based on Kickstarter campaigns 2019-2020
 nous avons effectué ce qui était demandé dans le TP, et extrait les features supplémentaires : heure de lancement (launch_hour), jour de lancement (launch_day), mois de lancement (launch_month) en espérant qu'il y ait des moments plus propices pour lancer une campagne.
 
 ## Modèle:
-nous avons ajouté aux features les caractéristiques du lancement, et tenté dans la grille de paramètres de jouer sur d'autre paramètres de la régression logistique : aggregationDepth et elasticNetParam.
+nous avons ajouté aux features les caractéristiques du lancement launch_day et launch_hour (pas le mois car il n'apportait aucune amélioration), et tenté dans la grille de paramètres de jouer sur d'autre paramètres de la régression logistique : aggregationDepth et elasticNetParam.
 
 ## Résultats :
 TP initial:
