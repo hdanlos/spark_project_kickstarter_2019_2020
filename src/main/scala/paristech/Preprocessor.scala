@@ -180,7 +180,7 @@ object Preprocessor {
     dfNext.summary().show()
     dfNext.show()
 
-    dfNext.write.parquet("data/saved_data_with_launch")
+    dfNext.write.parquet("data/preprocessed")
 
     println("Hello World ! from Preprocessor")
     println("\n")

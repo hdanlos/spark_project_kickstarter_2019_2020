@@ -50,8 +50,7 @@ object Trainer {
 
     val df: DataFrame = spark
       .read
-     // .parquet("/home/hdanlos/cours-spark-telecom/data/prepared_trainingset")
-      .parquet("data/saved_data_with_launch")
+      .parquet("data/preprocessed")
 
     println(s"Nombre de lignes : ${df.count}")
     println(s"Nombre de colonnes : ${df.columns.length}")
@@ -95,12 +94,11 @@ object Trainer {
       .setOutputCols(Array("country_onehot", "currency_onehot"))
 
     // Stage 9 : assembler tous les features en un unique vecteur
+    // nous y ajoutons nos features launch_...
     val assembler = new VectorAssembler()
       .setInputCols(Array("tfidf", "days_campaign", "hours_prepa", "goal",
         "country_onehot", "currency_onehot",
-        "launch_day",
-        //"launch_month",
-        "launch_hour"))
+        "launch_day","launch_hour"))
       .setOutputCol("features")
 
     // Stage 10 : créer/instancier le modèle de classification
@@ -139,7 +137,7 @@ object Trainer {
     val model = pipeline.fit(training)
 
     // Now we can optionally save the fitted pipeline to disk
-    //model.write.overwrite().save("/tmp/spark-logistic-regression-model")
+    model.write.overwrite().save("data/spark-logistic-regression-model")
 
     // Test du modèle
     val dfWithSimplePredictions = model.transform(test)
@@ -160,7 +158,7 @@ object Trainer {
       .addGrid(lr.regParam, Array(10e-8, 10e-6, 10e-4,10e-2))
       .addGrid(lr.aggregationDepth,Array(2,5,10))
       .addGrid(lr.elasticNetParam, Array(0.0, 0.5, 1.0))
-      .addGrid(lr.fitIntercept,Array(false, true))
+      .addGrid(lr.fitIntercept,Array(true,false))
       .addGrid(tf.minDF, Array(55.0, 75.0, 95.0))
       .build()
 
@@ -175,6 +173,9 @@ object Trainer {
 
     // Run train validation split, and choose the best set of parameters.
     val model_grid = trainValidationSplit.fit(training)
+
+    // Now we can optionally save the fitted pipeline to disk
+    model_grid.write.overwrite().save("data/grid-logistic-regression-model")
 
     val dfWithPredictions = model_grid.transform(test)
 
